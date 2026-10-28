@@ -1,0 +1,169 @@
+<mujoco model="dvrk_endowrist_cable_system">
+  <compiler angle="radian" autolimits="true" coordinate="local"/>
+  
+  <option gravity="0 0 0" timestep="0.001" integrator="Euler">
+    <flag contact="enable" energy="enable"/>
+  </option>
+
+  <default>
+    <joint damping="0.0015" armature="0.0002" frictionloss="0.001"/>
+    <geom friction="1.2 0.02 0.002" solref="0.004 1" solimp="0.9 0.95 0.001"/>
+    <site size="0.0006" rgba="0.9 0.2 0.2 0.8"/>
+  </default>
+
+  <asset>
+    <material name="shaft_mat" rgba="0.25 0.25 0.28 1.0" shininess="0.6"/>
+    <material name="metal_mat" rgba="0.75 0.75 0.78 1.0" shininess="0.8" specular="0.6"/>
+    <material name="jaw_mat" rgba="0.85 0.85 0.9 1.0" shininess="0.9"/>
+    <material name="tissue_mat" rgba="0.85 0.35 0.35 0.9" shininess="0.3"/>
+  </asset>
+
+  <worldbody>
+    <light directional="true" pos="0 0 1" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
+    <light directional="true" pos="0.5 0.5 0.5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4"/>
+
+    <!-- Instrument Base & Shaft (Mounted on da Vinci PSM carriage) -->
+    <body name="tool_base" pos="0 0 0.25">
+      <!-- Outer Shaft (Roll Axis) -->
+      <body name="tool_shaft" pos="0 0 0">
+        <joint name="j_roll" type="hinge" axis="0 0 1" range="-3.14 3.14" damping="0.002"/>
+        <geom name="shaft_geom" type="cylinder" size="0.004 0.12" material="shaft_mat"/>
+        
+        <!-- Proximal Cable Drum Guide Sites (Motor Interface Carriage) -->
+        <site name="drum_pitch_p" pos="0 0.0035 0.11"/>
+        <site name="drum_pitch_n" pos="0 -0.0035 0.11"/>
+        <site name="drum_jaw1_close" pos="0.003 0 0.11"/>
+        <site name="drum_jaw1_open"  pos="-0.003 0 0.11"/>
+        <site name="drum_jaw2_close" pos="-0.003 0 0.11"/>
+        <site name="drum_jaw2_open"  pos="0.003 0 0.11"/>
+
+        <!-- Distal Wrist Pitch Link -->
+        <body name="wrist_pitch_link" pos="0 0 -0.12">
+          <joint name="j_pitch" type="hinge" axis="1 0 0" range="-1.4 1.4"/>
+          <!-- Pitch Cleavis / Bracket -->
+          <geom name="pitch_clevis" type="cylinder" size="0.0038 0.004" zaxis="1 0 0" material="metal_mat"/>
+          <geom name="pitch_stem" type="box" size="0.003 0.003 0.004" pos="0 0 -0.004" material="metal_mat"/>
+
+          <!-- Pitch Pulley Anchors -->
+          <site name="pitch_anchor_p" pos="0 0.0032 -0.003"/>
+          <site name="pitch_anchor_n" pos="0 -0.0032 -0.003"/>
+
+          <!-- Intermediate Idler Pulleys for Jaw Cables passing across pitch axis -->
+          <site name="wrist_idler_close" pos="0 0.0025 -0.005"/>
+          <site name="wrist_idler_open"  pos="0 -0.0025 -0.005"/>
+
+          <!-- ============================================== -->
+          <!-- Jaw 1 (Left Gripper)                           -->
+          <!-- ============================================== -->
+          <body name="jaw1" pos="0 0 -0.008">
+            <joint name="j_jaw1" type="hinge" axis="0 1 0" range="-1.4 1.4"/>
+            <geom name="jaw1_pivot" type="cylinder" size="0.003 0.0018" zaxis="0 1 0" material="metal_mat"/>
+            <!-- Grasping blade -->
+            <geom name="jaw1_blade" type="box" size="0.0008 0.0014 0.008" pos="0.0015 0 -0.008" material="jaw_mat"/>
+            
+            <!-- Tendon anchor horns on Jaw 1 -->
+            <site name="horn1_close" pos="0.0025 0 -0.002"/>
+            <site name="horn1_open"  pos="-0.0025 0 -0.002"/>
+          </body>
+
+          <!-- ============================================== -->
+          <!-- Jaw 2 (Right Gripper, sharing same yaw axis)   -->
+          <!-- ============================================== -->
+          <body name="jaw2" pos="0 0 -0.008">
+            <joint name="j_jaw2" type="hinge" axis="0 1 0" range="-1.4 1.4"/>
+            <geom name="jaw2_pivot" type="cylinder" size="0.003 0.0018" zaxis="0 1 0" material="metal_mat"/>
+            <!-- Grasping blade -->
+            <geom name="jaw2_blade" type="box" size="0.0008 0.0014 0.008" pos="-0.0015 0 -0.008" material="jaw_mat"/>
+
+            <!-- Tendon anchor horns on Jaw 2 -->
+            <site name="horn2_close" pos="-0.0025 0 -0.002"/>
+            <site name="horn2_open"  pos="0.0025 0 -0.002"/>
+          </body>
+
+        </body>
+      </body>
+    </body>
+
+    <!-- Grasping Target: Elastic Biological Tissue Sample / Surgical Needle -->
+    <body name="target_tissue" pos="0 0 0.110">
+      <geom name="tissue_geom" type="box" size="0.0006 0.003 0.003" material="tissue_mat"
+            solref="0.006 1" solimp="0.85 0.95 0.001"/>
+    </body>
+
+  </worldbody>
+
+  <!-- ============================================================ -->
+  <!-- SPATIAL CABLE ROUTING (Physical Tendon-Driven Transmission)  -->
+  <!-- ============================================================ -->
+  <tendon>
+    <!-- Pitch Flexor/Extensor Cables (zero passive stiffness: pure cable tension) -->
+    <spatial name="cable_pitch_p" damping="0.1">
+      <site site="drum_pitch_p"/>
+      <site site="pitch_anchor_p"/>
+    </spatial>
+    <spatial name="cable_pitch_n" damping="0.1">
+      <site site="drum_pitch_n"/>
+      <site site="pitch_anchor_n"/>
+    </spatial>
+
+    <!-- Jaw 1 Cables (routed over pitch idlers) -->
+    <spatial name="cable_jaw1_close" damping="0.1">
+      <site site="drum_jaw1_close"/>
+      <site site="wrist_idler_close"/>
+      <site site="horn1_close"/>
+    </spatial>
+    <spatial name="cable_jaw1_open" damping="0.1">
+      <site site="drum_jaw1_open"/>
+      <site site="wrist_idler_open"/>
+      <site site="horn1_open"/>
+    </spatial>
+
+    <!-- Jaw 2 Cables (routed over pitch idlers) -->
+    <spatial name="cable_jaw2_close" damping="0.1">
+      <site site="drum_jaw2_close"/>
+      <site site="wrist_idler_close"/>
+      <site site="horn2_close"/>
+    </spatial>
+    <spatial name="cable_jaw2_open" damping="0.1">
+      <site site="drum_jaw2_open"/>
+      <site site="wrist_idler_open"/>
+      <site site="horn2_open"/>
+    </spatial>
+  </tendon>
+
+  <!-- ============================================================ -->
+  <!-- UNILATERAL PULL-ONLY CABLE ACTUATORS (Motor Capstans)        -->
+  <!-- ============================================================ -->
+  <actuator>
+    <!-- Tool Roll Drive -->
+    <motor name="act_roll" joint="j_roll" ctrlrange="-1.0 1.0"/>
+
+    <!-- Pitch Antagonistic Cables (Pull-Only: 0 ~ 20 N) -->
+    <motor name="act_pitch_p" tendon="cable_pitch_p" ctrlrange="0 20"/>
+    <motor name="act_pitch_n" tendon="cable_pitch_n" ctrlrange="0 20"/>
+
+    <!-- Jaw 1 Cables (Pull-Only: 0 ~ 25 N) -->
+    <motor name="act_jaw1_close" tendon="cable_jaw1_close" ctrlrange="0 25"/>
+    <motor name="act_jaw1_open"  tendon="cable_jaw1_open"  ctrlrange="0 25"/>
+
+    <!-- Jaw 2 Cables (Pull-Only: 0 ~ 25 N) -->
+    <motor name="act_jaw2_close" tendon="cable_jaw2_close" ctrlrange="0 25"/>
+    <motor name="act_jaw2_open"  tendon="cable_jaw2_open"  ctrlrange="0 25"/>
+  </actuator>
+
+  <!-- ============================================================ -->
+  <!-- SENSORS (Kinematics & Encoders)                              -->
+  <!-- ============================================================ -->
+  <sensor>
+    <jointpos name="pos_pitch" joint="j_pitch"/>
+    <jointpos name="pos_jaw1" joint="j_jaw1"/>
+    <jointpos name="pos_jaw2" joint="j_jaw2"/>
+    <jointvel name="vel_pitch" joint="j_pitch"/>
+    <jointvel name="vel_jaw1" joint="j_jaw1"/>
+    <jointvel name="vel_jaw2" joint="j_jaw2"/>
+  </sensor>
+
+  <contact>
+    <exclude body1="jaw1" body2="jaw2"/>
+  </contact>
+</mujoco>
