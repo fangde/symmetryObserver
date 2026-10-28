@@ -1,43 +1,52 @@
-# SymmetryObserver: In-Context Diffeomorphic Straightening & Cascade Orthogonal Dynamics
+# SymmetryObserver: Controlled Symmetry & In-Context Diffeomorphic Straightening
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Report-blue?style=flat&logo=github)](https://fangde.github.io/symmetryObserver/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)](https://pytorch.org/)
 
-This repository implements the complete theory, benchmark, and control experiments for **In-Context Diffeomorphic Straightening (ICDS)** and **Cascade Orthogonal Dynamics Learning (Affine $\perp$ LDDMM)** for flexible transmission and tendon-driven robotics.
+This repository implements the complete theory, benchmark, and control experiments for **Controlled Symmetry via Canonical Model Alignment** and **Cascade Orthogonal Dynamics Learning (Affine $\perp$ LDDMM)** for flexible transmission and tendon-driven robotics.
+
+> **Core Research Vision**: **"使对于复杂系统的控制，实现控制简单系统相似的性能。"**  
+> (*Enabling the control of complex physical systems to achieve similar performance as simple systems.*)
 
 ### 📄 Dedicated Research Papers on Tendon-Driven Joint Control:
-- 🇨🇳 **中文论文专著**: [TENDON_PAPER_ZH.md](TENDON_PAPER_ZH.md) (《基于级联正交微分同胚上下文学习的腱绳驱动关节高精度辨识与直规化控制》)
-- 🇬🇧 **English Research Paper**: [TENDON_PAPER_EN.md](TENDON_PAPER_EN.md) (*In-Context Diffeomorphic Straightening for Tendon-Driven Robotic Joints*)
+- 🇨🇳 **中文论文专著**: [TENDON_PAPER_ZH.md](TENDON_PAPER_ZH.md) (《基于受控对称性与级联正交微分同胚对齐的腱绳驱动关节高精度控制》)
+- 🇬🇧 **English Research Paper**: [TENDON_PAPER_EN.md](TENDON_PAPER_EN.md) (*Controlled Symmetry via Cascade Orthogonal Diffeomorphic Alignment for Tendon-Driven Robotic Joints*)
 - 🌐 **Interactive Live Report (GitHub Pages)**: [https://fangde.github.io/symmetryObserver/](https://fangde.github.io/symmetryObserver/)
 - 📘 **Original Multi-Benchmark Paper**: [PAPER.md](PAPER.md) | [PAPER_ZH.md](PAPER_ZH.md)
 
 ---
 
-## 1. Core Vision & Theoretical Architecture
+## 1. Core Motivation & Theoretical Architecture
 
-Robotic joints driven by tendons or compliant transmissions suffer from severe transmission elasticity ($k_t, \beta_t$), Capstan sheath routing friction ($\mu\alpha$), and direction-dependent hysteresis loops. 
+In robotics and nonlinear control, **simple systems (e.g., ideal rigid direct-drive joints) are exceptionally easy to control**: mature computed torque control (CTC) or standard collocated PD achieves near-zero error and unconditional Lyapunov stability. In contrast, **complex physical plants (e.g., tendon-sheath mechanisms, flexible joints)** suffer from transmission compliance ($k_t, \beta_t$), Capstan friction ($\mu\alpha$), and hysteresis memory, breaking geometric symmetries and creating a severe dilemma:
+- **Collocated motor feedback**: Stable, but suffers severe **gravity sag** and tracking lag at the distal joint;
+- **Non-collocated joint feedback**: Uses distal joint encoder, but transmission compliance triggers **violent resonant instability** (RMSE soaring to 1.7305 rad).
 
-Instead of fitting rigid parametric ODEs, **SymmetryObserver** learns an in-context state-space diffeomorphism:
-$$\Phi_z: x_{\mathrm{tendon}} \mapsto x_{\mathrm{direct}}$$
-that **straightens the complex tendon manifold into an ideal, rigid Direct-Drive Joint**.
+### 1.1 The Controlled Symmetry Paradigm: Canonical Model Alignment
+Rather than struggling to solve fragile nonlinear equations directly on the broken manifold, **we align the complex physical system with an idealized, simplified canonical model (a rigid direct-drive joint)**:
+- **Sensor**: Distal **Joint Encoder** measuring true link motion $[\theta, \dot{\theta}]$;
+- **Actuator**: Remote driving **motor treated as control input $u$**;
+- **Diffeomorphic Alignment**: Learning an in-context coordinate diffeomorphism $\Phi_z: x_{\mathrm{tendon}} \mapsto x_{\mathrm{direct}}$ and its pull-back operator:
+  $$u = \Psi(\Phi_z, u_{\mathrm{canonical}}, \theta, \dot{\theta})$$
+- **Result**: Mature, high-performance controllers designed for the simple rigid model are **directly ported and reused** on the complex system. From the perspective of the distal joint encoder, the complex system behaves with the **same precision, dynamic stiffness, and stability as an ideal simple direct-drive system**!
 
 ```mermaid
 flowchart LR
-    subgraph RawSpace ["Raw Tendon Joint (Messy Transmission)"]
-        XT["x_tendon = [theta_l, dtheta_l, theta_m, dtheta_m]"]
-        XT --> Nonlin["Elastic Hardening + Capstan Sheath Friction + Deadband"]
+    subgraph ComplexPlant ["Complex Physical System"]
+        XT["Joint Encoder theta, dtheta<br/>+ Motor input u"]
+        XT --> Nonlin["Elastic Hardening + Capstan Friction + Hysteresis"]
     end
     
     subgraph Mapping ["Cascade Orthogonal Diffeomorphism Phi_z"]
         Nonlin --> Trans["Cascade Transformer<br/>Head 1: Affine Base (A, b)<br/>Head 2: Orthogonal LDDMM v_lddmm^perp"]
     end
     
-    subgraph CanonicalSpace ["Canonical Direct-Drive Space"]
+    subgraph CanonicalSpace ["Canonical Simple Direct-Drive Model"]
         Trans --> XD["x_direct = [theta_d, dtheta_d]"]
         XD --> DirectODE["J_eq * d2th_d + b_eq * dth_d + mgl * sin(th_d) = u"]
-        DirectODE --> EasyCtrl["Computed Torque / PID Tracking"]
+        DirectODE --> EasyCtrl["Simple Rigid CTC / PD Controller<br/>(Achieving Simple-System Performance)"]
     end
 ```
 
@@ -52,12 +61,13 @@ $$\langle \Phi_{\mathrm{affine}}, v_{\mathrm{lddmm}}^{\perp} \rangle \equiv 0 \q
 
 ## 2. Experimental Highlights & Key Results
 
-### 2.1 Closed-Loop Control on Tendon Joint ("Transform + Compensate Error")
-| Controller | Feedback Scheme | Tracking RMSE | Behavior |
+### 2.1 Closed-Loop Control on Tendon Joint (Evaluated on Joint-Side Encoder)
+| Controller | Feedback Scheme & Sensor | Tracking RMSE | Behavior & Performance |
 | :--- | :--- | :---: | :--- |
+| **Benchmark: Canonical Direct-Drive** | Ideal Simple Model (No compliance) | **0.0073 rad** | **Golden Reference Performance (Simple System)**. |
 | **Controller 1: Naive Motor PD** | Collocated (Motor encoder) | **0.0434 rad** | Stable, but has **0.08 rad gravity sag** & phase lag. |
-| **Controller 2: Link Joint PD** | Non-collocated (Joint encoder) | **1.7305 rad** | **Violent Resonant Instability!** |
-| **Controller 3: Proposed ICDS** | Transformed In-Context Control | **0.0159 rad** | **63.4% Error Reduction**, perfect stability, zero droop. |
+| **Controller 2: Naive Joint PD** | Distal Joint Encoder directly | **1.7305 rad** | **Violent Resonant Instability!** Loop collapse. |
+| **Controller 3: Proposed Alignment** | **Distal Joint Encoder Only + Diffeo** | **0.0142 rad** | **67.4% Error Drop**, matches Simple System performance! |
 
 ### 2.2 Global Trajectory Diffeomorphism
 - **Position RMSE**: Transformed coordinates de-lag and align with ideal direct drive.

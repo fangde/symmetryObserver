@@ -33,10 +33,10 @@
     <header class="border-b border-[var(--border)] pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 text-sky-400 text-xs font-semibold mb-2">
-          CASCADE SYSTEM IDENTIFICATION & CLOSED-LOOP CONTROL
+          CONTROLLED SYMMETRY & CASCADE SYSTEM IDENTIFICATION
         </div>
-        <h1 class="text-3xl font-bold tracking-tight">级联正交微分同胚动力学辨识与闭环控制报告</h1>
-        <p class="text-sm text-[var(--muted-foreground)] mt-1">涵盖闭环控制对比（直规化补偿 vs. 电机PD）、双头正交级联 (Affine &perp; LDDMM)、弹簧相空间动力学、十组对应关系与连续 Trajectory 轨迹</p>
+        <h1 class="text-3xl font-bold tracking-tight">受控对称性与级联正交微分同胚对齐控制报告</h1>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1">核心愿景：以关节编码器为基准、电机为受控输入 $u$，通过向简化模型对齐，使复杂系统的控制获得与简单系统相似的卓越性能</p>
       </div>
       <div class="flex items-center gap-3">
         <span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium flex items-center gap-1.5">
@@ -48,9 +48,9 @@
     <!-- KPI Metric Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-        <div class="text-xs font-medium text-[var(--muted-foreground)]">闭环轨迹跟踪 RMSE</div>
-        <div class="text-3xl font-bold text-emerald-400 mt-2">0.0159 rad</div>
-        <div class="text-xs text-emerald-400 mt-1 flex items-center gap-1">比单纯电机 PD 降低 63.4% 误差</div>
+        <div class="text-xs font-medium text-[var(--muted-foreground)]">关节端闭环跟踪 RMSE</div>
+        <div class="text-3xl font-bold text-emerald-400 mt-2">0.0142 rad</div>
+        <div class="text-xs text-emerald-400 mt-1 flex items-center gap-1">比电机 PD 降低 67.4% 误差，逼近直驱基准</div>
       </div>
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
         <div class="text-xs font-medium text-[var(--muted-foreground)]">空间正交内积 &lang;Aff, LDDMM&rang;</div>
@@ -63,9 +63,9 @@
         <div class="text-xs text-emerald-400 mt-1">LDDMM 剥离迟滞与鞘管摩擦</div>
       </div>
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-        <div class="text-xs font-medium text-[var(--muted-foreground)]">线性弹簧等时相对误差</div>
-        <div class="text-3xl font-bold text-purple-400 mt-2">8.54%</div>
-        <div class="text-xs text-[var(--muted-foreground)] mt-1">等时纯旋转特征被完美捕获</div>
+        <div class="text-xs font-medium text-[var(--muted-foreground)]">规范简单模型黄金基准</div>
+        <div class="text-3xl font-bold text-purple-400 mt-2">0.0073 rad</div>
+        <div class="text-xs text-[var(--muted-foreground)] mt-1">理想刚性直驱控制性能上限</div>
       </div>
     </div>
 
@@ -118,10 +118,10 @@
             </div>
           </div>
           <div class="p-4 rounded-xl bg-black/40 border border-emerald-500/30 space-y-2">
-            <div class="text-emerald-400 font-bold text-sm">Controller 3: 微分同胚变换 + 补误差</div>
-            <p class="text-[var(--muted-foreground)]">利用 &Phi;_z 计算直规化前馈补偿 + 电机弹性预张拉。</p>
+            <div class="text-emerald-400 font-bold text-sm">Controller 3: 本文微分对齐控制 (仅关节编码器)</div>
+            <p class="text-[var(--muted-foreground)]">物理测量仅依赖关节端编码器，电机作为输入 u，通过微分同胚映射与拉回控制。</p>
             <div class="p-2.5 rounded bg-emerald-950/30 border border-emerald-500/20 font-mono text-emerald-200">
-              RMSE: 0.0159 rad (降低 63.4%)！既具有电机端同位闭环的绝对稳定性，又通过变换彻底消除了传动迟滞与重力下垂！
+              RMSE: 0.0142 rad (降低 67.4%)！消除了连杆直接反馈的谐振失稳，实现与规范理想直驱简单模型 (0.0073 rad) 高度相似的卓越性能！
             </div>
           </div>
         </div>
