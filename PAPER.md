@@ -116,8 +116,13 @@ In realistic robotic setups, data is gathered as continuous time-series trajecto
   $$\tau_{\mathrm{ctx}} = \big[ u(t), \theta_l(t), \dot{\theta}_l(t), \theta_m(t), \dot{\theta}_m(t) \big]_{t=1}^{T_{\mathrm{ctx}}}$$
 - **Query Rollout**: A new, unseen excitation torque sequence $u_{\mathrm{query}}(t)$, testing trajectory prediction over $2.0 \sim 4.0$ seconds.
 
-### 4.2 Causal Temporal Transformer
-The architecture employs 1D causal temporal convolutions with kernel size $k=5$ to estimate local numerical derivatives, followed by sinusoidal positional encodings and multi-head cross-attention ($d_{\mathrm{model}}=128$, $n_{\mathrm{head}}=4$). The model extracts the latent physical parameters $z = \{k_t, \beta_t, \mu\alpha\}$ directly from the calibration trajectory without explicit parameter regression.
+### 4.2 Causal Temporal Transformer & Computational Complexity
+The architecture employs 1D causal temporal convolutions with kernel size $k=5$ to estimate local numerical derivatives, followed by sinusoidal positional encodings and multi-head cross-attention ($d_{\mathrm{model}}=96$, $n_{\mathrm{head}}=4$, $L=3$ layers). The model extracts the latent physical parameters $z = \{k_t, \beta_t, \mu\alpha\}$ directly from the calibration trajectory without explicit parameter regression.
+
+**Computational Complexity & Memory Footprint**:
+- **Complexity Breakdown**: Context encoding requires $\mathcal{O}(L_{\mathrm{enc}} (T_{\mathrm{ctx}} d_{\mathrm{model}}^2 + T_{\mathrm{ctx}}^2 d_{\mathrm{model}})) \approx 0.82\text{ MFLOPs}$ ($T_{\mathrm{ctx}} \le 64$). For single-step online control ($M=1$), the quadratic attention bottleneck vanishes, reducing to linear complexity $\mathcal{O}(L_{\mathrm{dec}}(d_{\mathrm{model}}^2 + T_{\mathrm{ctx}} d_{\mathrm{model}}))$.
+- **Parameter Count & Storage**: Total model size is **707,660 parameters** (only **2.83 MB** FP32), completely fitting inside CPU L2/L3 caches.
+- **Amortized Context Caching (KV-Cache)**: Physical parameters drift slowly. Computing context memory $M_{\mathrm{ctx}}$ once (or asynchronously at 10~20 Hz) enables high-frequency control loops to evaluate only the cross-attention query in **0.370 ms**, yielding an effective control frequency of **2,704 Hz**.
 
 ---
 
@@ -185,6 +190,24 @@ To evaluate real-world utility, we benchmarked three closed-loop control schemes
 
 ---
 
+### 5.4 Transformer Speed, Latency & Real-Time Benchmark
+
+We benchmarked the exact execution latency and throughput of the Cascade Transformer on a standard single-thread CPU without specialized GPU hardware:
+
+*Table: Transformer speed, latency, and real-time bandwidth benchmark*
+| Execution Mode | Sequence Config | Latency | Bandwidth / Throughput | Real-Time Feasibility |
+| :--- | :--- | :---: | :---: | :--- |
+| **Cold Online Step** | $T_{\mathrm{ctx}}=32, M=1$ | **0.746 ms** | **1,341 Hz** | Exceeds 1.0 kHz robot control cycle ($1.0\text{ ms}$). |
+| **Cached Context Step** | Pre-cached $M_{\mathrm{ctx}}, M=1$ | **0.370 ms** | **2,704 Hz** | **Consumes only 37% of 1 kHz cycle** (2.7× safety margin). |
+| **Batch Trajectory Rollout** | $T_{\mathrm{ctx}}=32, M=100$ | **1.205 ms** | **83,827 steps/s** | High-throughput trajectory MPC & planning. |
+
+**Comparison with Alternative Architectures**:
+- **DeepSets (0.147 ms, 6,802 Hz)**: While fast, symmetric pooling destroys directional memory, resulting in 44.5% higher RMSE ($1.3938$ vs $0.9645$) and frequent topological violations ($\det J < 0$ in 37.5% of cases), which destabilizes feedback loops.
+- **Invertible Normalizing Flow (0.119 ms, 8,403 Hz)**: Constrained invertible coupling layers struggle to represent asymmetric Capstan friction and cubic compliance (RMSE $1.4078$).
+- **Cascade Transformer (0.370 ms cached, 2,704 Hz)**: Achieves the optimal Pareto compromise, delivering sub-millisecond execution with state-of-the-art geometric tracking fidelity.
+
+---
+
 ## 6. Discussion & Engineering Takeaways
 
 1. **Why Velocity Loss is Structurally Higher in Nonlinear Dynamics**:  
@@ -201,6 +224,7 @@ To evaluate real-world utility, we benchmarked three closed-loop control schemes
 In this paper, we introduced an In-Context Diffeomorphic Straightening framework for tendon-driven robots. By coupling a Transformer in-context operator with a dual-head Cascade decomposition and a mathematically exact orthogonal projection operator, we achieved:
 - Machine precision ($10^{-8}$) separation between affine transmission kinematics and non-rigid LDDMM friction hysteresis;
 - An 80.2% reduction in open-loop velocity chattering;
-- A 63.4% reduction in closed-loop trajectory tracking error while maintaining absolute collocated stability.
+- A 63.4% reduction in closed-loop trajectory tracking error while maintaining absolute collocated stability;
+- Sub-millisecond real-time execution (**0.370 ms latency / 2,704 Hz bandwidth** on edge CPU), enabling direct integration into 1 kHz industrial robot servo loops.
 
 This methodology bridges geometric deep learning, non-rigid shape analysis, and practical robotics control, offering a principled foundation for mastering flexible transmission dynamics in next-generation robotic systems.

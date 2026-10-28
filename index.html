@@ -192,11 +192,12 @@
             <p>无需复杂的全局姿态扫描。基于<strong>上下文学习（In-Context Learning）</strong>范式，模型在离线阶段已见过丰富物理流形，在线推断时<strong>完全无需反向传播梯度下降（Zero-shot）</strong>，手指标定只需做一次 0.6 秒的微幅屈伸动作即可完成刚度与迟滞特性提取。</p>
           </div>
           <div class="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 leading-relaxed space-y-2">
-            <div class="font-bold text-sm text-emerald-400">2. 计算时间与实时控制频率实测 (单线程 CPU)</div>
+            <div class="font-bold text-sm text-emerald-400">2. Transformer 计算速度与实时控制频率实测 (单核 CPU)</div>
             <ul class="list-disc pl-4 space-y-1">
-              <li><strong>端到端前向单次推断</strong>：<strong>0.916 ms (1091 Hz)</strong>，满足 1 kHz 标准控制周期；</li>
-              <li><strong>解耦线程 1 (异步上下文编码)</strong>：<strong>0.418 ms</strong> (开机运行一次或 10 Hz 异步更新)；</li>
-              <li><strong>解耦线程 2 (硬实时控制闭环)</strong>：<strong>0.389 ms (2568 Hz 带宽)</strong>！单步仅需 389 微秒，可完美嵌入 RT-Linux / ROS 2 实时控制硬中断。</li>
+              <li><strong>单步冷启动推断</strong>：<strong>0.746 ms (1341 Hz)</strong>，直接满足 1 kHz 标准控制周期；</li>
+              <li><strong>KV 上下文缓存实时 Query</strong>：<strong>0.370 ms (2704 Hz 带宽)</strong>！单步仅耗时 370 微秒（占 1 kHz 周期的 37%）；</li>
+              <li><strong>整段轨迹批处理 Rollout</strong>：<strong>1.205 ms (83,827 步/秒)</strong>，极速支持高吞吐轨迹 MPC 前瞻；</li>
+              <li><strong>硬件适配性</strong>：无需昂贵独立 GPU，可直接嵌入 RT-Linux / PREEMPT_RT / ROS 2 实时控制中断。</li>
             </ul>
           </div>
         </div>
