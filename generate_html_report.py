@@ -14,6 +14,7 @@ def update_full_report():
     img_tendon = get_base64_img("tendon_benchmark/results/global_transformation_comparison.png")
     img_cascade = get_base64_img("tendon_benchmark/results/cascade_affine_lddmm_orthogonal.png")
     img_control = get_base64_img("tendon_benchmark/results/closed_loop_control_comparison.png")
+    img_aerohand = get_base64_img("tendon_benchmark/results/aero_hand_mujoco_comparison.png")
     
     with open("template_report.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -24,6 +25,7 @@ def update_full_report():
     html = html.replace("__IMG_TENDON__", img_tendon)
     html = html.replace("__IMG_CASCADE__", img_cascade)
     html = html.replace("__IMG_CONTROL__", img_control)
+    html = html.replace("__IMG_AEROHAND__", img_aerohand)
     
     workspace_path = "/Volumes/KIOXIA/symmetryObserver/test_report.html"
     with open(workspace_path, "w", encoding="utf-8") as f:

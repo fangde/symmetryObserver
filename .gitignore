@@ -33,5 +33,6 @@ wheels/
 venv/
 ENV/
 
-# Jupyter
-.ipynb_checkpoints
+# External repos
+aero_hand_open/
+aero_open_sim/

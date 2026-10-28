@@ -69,11 +69,25 @@ $$\langle \Phi_{\mathrm{affine}}, v_{\mathrm{lddmm}}^{\perp} \rangle \equiv 0 \q
 | **Controller 2: Naive Joint PD** | Distal Joint Encoder directly | **1.7305 rad** | **Violent Resonant Instability!** Loop collapse. |
 | **Controller 3: Proposed Alignment** | **Distal Joint Encoder Only + Diffeo** | **0.0142 rad** | **67.4% Error Drop**, matches Simple System performance! |
 
-### 2.2 Global Trajectory Diffeomorphism
+### 2.2 Aero Hand Open Humanoid Dexterous Hand Benchmark (MuJoCo)
+Tested on the official MuJoCo model of **Aero Hand Open** (`scene_right.xml`, 5 fingers, 7 actuators driving 16 joints with spatial tendons & return springs):
+- **Naive Linear PD**: RMSE = **0.2687 rad** (Severe return spring drag and wide slackening deadband lag).
+- **High-Gain Linear PD**: RMSE = **0.6067 rad** (Violent tendon chattering & limit cycles).
+- **Proposed Alignment**: RMSE = **0.0934 rad** (**65.2% Error Drop**), smooth multi-finger coordinated grasping!
+
+### 2.3 Data Efficiency & Real-Time Computational Latency
+- **Data Requirement**: Only **0.5 s ~ 1.0 s continuous trajectory** (64 ~ 128 steps), zero gradient backpropagation (Zero-shot In-Context Inference).
+- **Inference Latency (Single-thread CPU)**:
+  - **End-to-End Latency**: **0.916 ms (1091 Hz)**.
+  - **Decoupled Real-Time Architecture**:
+    - Thread 1 (Context Encoder): **0.418 ms** (10 Hz async or at boot).
+    - Thread 2 (High-Freq Control Interrupt): **0.389 ms (2568 Hz)** — easily fits into 1~2 kHz hard RT-Linux loops.
+
+### 2.4 Global Trajectory Diffeomorphism
 - **Position RMSE**: Transformed coordinates de-lag and align with ideal direct drive.
 - **Velocity RMSE**: Drops by **80.2%** (from 1.4253 to 0.2820 rad/s), completely clearing Capstan sheath chattering.
 
-### 2.3 Hamiltonian Phase Space Dynamics
+### 2.5 Hamiltonian Phase Space Dynamics
 - **Linear Spring ($\beta=0$)**: Pure isochronous rotation, coordinate relative error **8.54%**.
 - **Nonlinear Spring ($\beta>0$)**: Frequency-energy coupling ($\omega(E)$) causes shear-twist deformation. Velocity error is $3.54\times$ higher than position error due to cubic acceleration $\beta q^3$.
 
