@@ -1,0 +1,122 @@
+[
+  {
+    "setting": "Standard (L=4, K=32)",
+    "model": "Oracle (GT)",
+    "coord_rmse": 0.0,
+    "coord_rel_err": 0.0,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.03902411460876465
+  },
+  {
+    "setting": "Standard (L=4, K=32)",
+    "model": "transformer",
+    "coord_rmse": 0.9645105451345444,
+    "coord_rel_err": 0.6269046366214752,
+    "jac_rel_err": 0.9422770477831364,
+    "positive_det_rate": 0.875,
+    "inverse_rmse": 2.16677725315094,
+    "eval_time_sec": 1.2671809196472168
+  },
+  {
+    "setting": "Standard (L=4, K=32)",
+    "model": "deepsets",
+    "coord_rmse": 1.3937876224517822,
+    "coord_rel_err": 0.9053739905357361,
+    "jac_rel_err": 0.9851271882653236,
+    "positive_det_rate": 0.625,
+    "inverse_rmse": 0.8015478849411011,
+    "eval_time_sec": 0.14728999137878418
+  },
+  {
+    "setting": "Standard (L=4, K=32)",
+    "model": "invertible_flow",
+    "coord_rmse": 1.4077971875667572,
+    "coord_rel_err": 0.9139047563076019,
+    "jac_rel_err": 1.0041029080748558,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 2.360645794396987e-06,
+    "eval_time_sec": 0.11898493766784668
+  },
+  {
+    "setting": "Context Sample K=8",
+    "model": "transformer",
+    "coord_rmse": 1.456509530544281,
+    "coord_rel_err": 0.8134693801403046,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.05309891700744629
+  },
+  {
+    "setting": "Context Sample K=8",
+    "model": "deepsets",
+    "coord_rmse": 1.664661705493927,
+    "coord_rel_err": 0.9311768412590027,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.02491903305053711
+  },
+  {
+    "setting": "Context Sample K=128",
+    "model": "transformer",
+    "coord_rmse": 0.9014467597007751,
+    "coord_rel_err": 0.5302335321903229,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.09257912635803223
+  },
+  {
+    "setting": "Context Sample K=128",
+    "model": "deepsets",
+    "coord_rmse": 1.5301430821418762,
+    "coord_rel_err": 0.8997803926467896,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.03763890266418457
+  },
+  {
+    "setting": "OOD Strong Distortion",
+    "model": "transformer",
+    "coord_rmse": 4.587072849273682,
+    "coord_rel_err": 0.8199152052402496,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.058875322341918945
+  },
+  {
+    "setting": "OOD Strong Distortion",
+    "model": "deepsets",
+    "coord_rmse": 4.326077103614807,
+    "coord_rel_err": 0.7990375757217407,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.02638077735900879
+  },
+  {
+    "setting": "Noisy Context (std=0.05)",
+    "model": "transformer",
+    "coord_rmse": 1.3019863367080688,
+    "coord_rel_err": 0.6533806920051575,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.060880184173583984
+  },
+  {
+    "setting": "Noisy Context (std=0.05)",
+    "model": "deepsets",
+    "coord_rmse": 1.826880395412445,
+    "coord_rel_err": 0.9187145233154297,
+    "jac_rel_err": 0.0,
+    "positive_det_rate": 1.0,
+    "inverse_rmse": 0.0,
+    "eval_time_sec": 0.02558588981628418
+  }
+]
