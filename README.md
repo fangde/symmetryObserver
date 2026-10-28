@@ -75,6 +75,9 @@ Tested on the official MuJoCo model of **Aero Hand Open** (`scene_right.xml`, 5 
 - **High-Gain Linear PD**: RMSE = **0.6067 rad** (Violent tendon chattering & limit cycles).
 - **Proposed Alignment**: RMSE = **0.0934 rad** (**65.2% Error Drop**), smooth multi-finger coordinated grasping!
 
+![Aero Hand Control Demo Animation](results/aero_hand_control_demo.gif)
+*Dynamic Simulation Video: Aero Hand Open Closed-Loop Control (Left: Naive PD with spring lag and deadband; Right: Proposed Controlled Symmetry with smooth coordinated grasping and wave motion) [▶ Download MP4 Video](results/aero_hand_control_demo.mp4)*
+
 ### 2.3 Data Efficiency & Real-Time Computational Latency
 - **Data Requirement**: Only **0.5 s ~ 1.0 s continuous trajectory** (64 ~ 128 steps), zero gradient backpropagation (Zero-shot In-Context Inference).
 - **Inference Latency (Single-thread CPU)**:

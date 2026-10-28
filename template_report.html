@@ -184,6 +184,25 @@
           <img src="__IMG_AEROHAND__" alt="Aero Hand Open MuJoCo Dexterous Benchmark" class="w-full h-auto rounded">
         </div>
 
+        <!-- Dynamic Simulation Video Animation (GIF + MP4) -->
+        <div class="rounded-lg overflow-hidden border border-[var(--border)] bg-black/50 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold text-purple-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse"></span>
+              Aero Hand Open 闭环控制动态仿真视频录像 (MuJoCo Live Simulation)
+            </span>
+            <a href="results/aero_hand_control_demo.mp4" target="_blank" class="px-3 py-1 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs font-semibold hover:bg-sky-500/30 transition">
+              ▶ 下载 / 播放完整 60fps MP4 视频 (1.2 MB)
+            </a>
+          </div>
+          <div class="rounded overflow-hidden border border-[var(--border)]">
+            <img src="results/aero_hand_control_demo.gif" alt="Aero Hand Control Demo Animation" class="w-full h-auto">
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)]">
+            对比录像说明：左侧为传统线性 PD 控制器（由于弹簧反力与腱绳松弛，出现明显的下垂与换向死区）；右侧为本文提出的受控对称性微分对齐控制器（吃掉弹簧阻力与松弛死区，四指平滑抓握与波浪律动顺从如真手）。
+          </p>
+        </div>
+
         <!-- Real-Time Latency & Data Requirements Table -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div class="p-4 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-300 leading-relaxed space-y-2">

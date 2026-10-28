@@ -455,6 +455,9 @@ We evaluated Index finger MCP flexion over a broad working range ($0.10 \sim 1.2
 ![Aero Hand MuJoCo Benchmark](results/aero_hand_mujoco_comparison.png)
 *Figure 5: Closed-loop control benchmark on Aero Hand Open (MuJoCo). Top: Index MCP trajectory tracking; Second: instantaneous tracking error; Third: coordinated multi-finger grasping tracking across 4 fingers; Bottom: physical tendon actuator displacement $u(t)$.*
 
+![Aero Hand Control Demo Animation](results/aero_hand_control_demo.gif)
+*Figure 6: Dynamic simulation video of Aero Hand Open (MuJoCo) under closed-loop control (Left: Naive Linear PD with spring lag and deadband; Right: Proposed Controlled Symmetry with smooth coordinated grasping and wave motion) [▶ Download High-Res MP4 Video](results/aero_hand_control_demo.mp4)*
+
 *Table 4: Quantitative control performance on Aero Hand Open (MuJoCo)*
 | Controller | Tracking RMSE (rad) | Peak Absolute Error | Real Dynamic Behavior |
 | :--- | :---: | :---: | :--- |

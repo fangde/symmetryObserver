@@ -488,6 +488,9 @@ $$\ddot{q} = \dot{p} = -\frac{k}{m} q - \frac{\beta}{m} q^3$$
 ![Aero Hand MuJoCo Benchmark](results/aero_hand_mujoco_comparison.png)
 *图 5：Aero Hand Open (MuJoCo) 仿生灵巧手闭环控制对比（第一栏：食指 MCP 关节轨迹跟踪；第二栏：瞬时跟踪误差；第三栏：四指协同抓握手势跟踪；第四栏：物理腱绳收卷位移控制量）*
 
+![Aero Hand Control Demo Animation](results/aero_hand_control_demo.gif)
+*图 6：Aero Hand Open 物理仿真闭环控制对比动态实录（左侧：传统线性 PD，弹簧阻滞严重与换向死区；右侧：本文受控对称性微分对齐，四指平滑抓握与波浪律动）[▶ 点击下载高分辨率 MP4 视频](results/aero_hand_control_demo.mp4)*
+
 *表 4：Aero Hand Open 灵巧手闭环控制量化跟踪指标对比*
 | 控制方案 | 关节跟踪 RMSE (rad) | 峰值绝对误差 (rad) | 灵巧手动态行为表现 |
 | :--- | :---: | :---: | :--- |
