@@ -7,8 +7,11 @@
 
 This repository implements the complete theory, benchmark, and control experiments for **In-Context Diffeomorphic Straightening (ICDS)** and **Cascade Orthogonal Dynamics Learning (Affine $\perp$ LDDMM)** for flexible transmission and tendon-driven robotics.
 
-📖 **Full Research Paper**: [PAPER.md](PAPER.md)  
-🌐 **Interactive HTML Report & Phase Canvas (GitHub Pages)**: [https://fangde.github.io/symmetryObserver/](https://fangde.github.io/symmetryObserver/)
+### 📄 Dedicated Research Papers on Tendon-Driven Joint Control:
+- 🇨🇳 **中文论文专著**: [TENDON_PAPER_ZH.md](TENDON_PAPER_ZH.md) (《基于级联正交微分同胚上下文学习的腱绳驱动关节高精度辨识与直规化控制》)
+- 🇬🇧 **English Research Paper**: [TENDON_PAPER_EN.md](TENDON_PAPER_EN.md) (*In-Context Diffeomorphic Straightening for Tendon-Driven Robotic Joints*)
+- 🌐 **Interactive Live Report (GitHub Pages)**: [https://fangde.github.io/symmetryObserver/](https://fangde.github.io/symmetryObserver/)
+- 📘 **Original Multi-Benchmark Paper**: [PAPER.md](PAPER.md) | [PAPER_ZH.md](PAPER_ZH.md)
 
 ---
 
